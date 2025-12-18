@@ -32,6 +32,28 @@ using LoneEftDmaRadar.UI.Radar.ViewModels;
 
 namespace LoneEftDmaRadar
 {
+    public class ConsoleHelper
+    {
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool AllocConsole();
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool FreeConsole();
+
+        public static void ShowConsole()
+        {
+            bool result = AllocConsole();
+            Console.WriteLine($"Console Allocated: {result}");
+        }
+
+        public static void HideConsole()
+        {
+            FreeConsole();
+        }
+    }
+
     public sealed class MainWindowViewModel
     {
         private readonly MainWindow _parent;
@@ -39,6 +61,7 @@ namespace LoneEftDmaRadar
 
         public MainWindowViewModel(MainWindow parent)
         {
+            ConsoleHelper.ShowConsole();
             _parent = parent ?? throw new ArgumentNullException(nameof(parent));
             LoadHotkeyManager();
         }

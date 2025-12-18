@@ -26,6 +26,7 @@ SOFTWARE.
  *
 */
 
+using LoneEftDmaRadar.Tarkov.GameWorld.Loot;
 using LoneEftDmaRadar.UI.Loot;
 
 namespace LoneEftDmaRadar.UI.Radar.ViewModels

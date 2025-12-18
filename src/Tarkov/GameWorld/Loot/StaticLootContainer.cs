@@ -45,10 +45,11 @@ namespace LoneEftDmaRadar.Tarkov.GameWorld.Loot
         /// </summary>
         public bool Searched { get; private set; }
 
-        public StaticLootContainer(string containerId, Vector3 position) : base(_default, position)
+        public StaticLootContainer(string containerId, Vector3 position, bool opened) : base(_default, position)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(containerId, nameof(containerId));
             ID = containerId;
+            this.Searched = opened;
             if (TarkovDataManager.AllContainers.TryGetValue(containerId, out var container))
             {
                 Name = container.ShortName ?? "Container";
@@ -59,7 +60,7 @@ namespace LoneEftDmaRadar.Tarkov.GameWorld.Loot
 
         public override void Draw(SKCanvas canvas, EftMapParams mapParams, LocalPlayer localPlayer)
         {
-            if (Position.WithinDistance(localPlayer.Position, App.Config.Containers.DrawDistance))
+            if (Position.WithinDistance(localPlayer.Position, App.Config.Containers.DrawDistance) && !this.Searched)
             {
                 var heightDiff = Position.Y - localPlayer.Position.Y;
                 var point = Position.ToMapPos(mapParams.Map).ToZoomedPos(mapParams);
