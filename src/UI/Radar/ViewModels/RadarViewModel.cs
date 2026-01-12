@@ -39,6 +39,7 @@ using LoneEftDmaRadar.UI.Radar.Views;
 using LoneEftDmaRadar.UI.Skia;
 using SkiaSharp.Views.WPF;
 using System.Windows.Controls;
+using static SDK.Offsets;
 
 namespace LoneEftDmaRadar.UI.Radar.ViewModels
 {
@@ -82,7 +83,7 @@ namespace LoneEftDmaRadar.UI.Radar.ViewModels
         /// <summary>
         /// All Filtered FilteredLoot on the map.
         /// </summary>
-        private static IEnumerable<LootItem> FilteredLoot => Memory.Loot?.FilteredLoot;
+        private static IEnumerable<Tarkov.GameWorld.Loot.LootItem> FilteredLoot => Memory.Loot?.FilteredLoot;
         /// <summary>
         /// All Static Containers on the map.
         /// </summary>
@@ -255,7 +256,7 @@ namespace LoneEftDmaRadar.UI.Radar.ViewModels
                         .Where(x => !x.HasExfild); // Skip exfil'd players
                     if (App.Config.Loot.Enabled) // Draw loot (if enabled)
                     {
-                        if (FilteredLoot is IEnumerable<LootItem> loot) // Draw important loot last (on top)
+                        if (FilteredLoot is IEnumerable<Tarkov.GameWorld.Loot.LootItem> loot) // Draw important loot last (on top)
                         {
                             foreach (var item in loot)
                             {
@@ -266,8 +267,11 @@ namespace LoneEftDmaRadar.UI.Radar.ViewModels
                             MainWindow.Instance?.Settings?.ViewModel is SettingsViewModel vm &&
                             Containers is IEnumerable<StaticLootContainer> containers)
                         {
-                            foreach (var container in containers) // Draw static loot containers
+                            int SearchCount = 0;
+
+                            foreach (StaticLootContainer container in containers) // Draw static loot containers
                             {
+                                if (container.Searched) { SearchCount++; Console.WriteLine($"Searched {SearchCount}"); continue; }
                                 if (vm.ContainerIsTracked(container.ID ?? "NULL"))
                                 {
                                     container.Draw(canvas, mapParams, localPlayer);
@@ -697,7 +701,7 @@ namespace LoneEftDmaRadar.UI.Radar.ViewModels
                         : null;
                     break;
 
-                case LootItem loot:
+                case Tarkov.GameWorld.Loot.LootItem loot:
                     _mouseOverItem = loot;
                     MouseoverGroup = null;
                     break;

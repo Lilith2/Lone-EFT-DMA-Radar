@@ -60,7 +60,7 @@ namespace LoneEftDmaRadar.Tarkov.GameWorld.Loot
 
         public override void Draw(SKCanvas canvas, EftMapParams mapParams, LocalPlayer localPlayer)
         {
-            if (Position.WithinDistance(localPlayer.Position, App.Config.Containers.DrawDistance) && !this.Searched)
+            if (Position.WithinDistance(localPlayer.Position, App.Config.Containers.DrawDistance))
             {
                 var heightDiff = Position.Y - localPlayer.Position.Y;
                 var point = Position.ToMapPos(mapParams.Map).ToZoomedPos(mapParams);

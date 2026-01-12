@@ -94,10 +94,12 @@ namespace LoneEftDmaRadar.Tarkov.GameWorld.Loot
             try
             {
                 GetLoot(ct);
+                
                 RefreshFilter();
             }
             catch (OperationCanceledException)
             {
+                Console.WriteLine("Loot Refresh Cancelled.");
                 throw;
             }
             catch (Exception ex)
@@ -251,19 +253,10 @@ namespace LoneEftDmaRadar.Tarkov.GameWorld.Loot
                             var ownerItemMongoId = Memory.ReadValue<MongoID>(ownerItemTemplate + Offsets.ItemTemplate._id);
                             var ownerItemId = ownerItemMongoId.ReadString();
                             
-                            ulong result = Memory.ReadValue<ulong>(interactiveClass + 0x150); //EFT.IPlayer <InteractingPlayer>k__BackingField; // 0x150
-                            bool containerOpened = false;
-                            if (result != 0)
-                            {
-                                Console.WriteLine($"IPlayer: {result}");
-                                containerOpened = true;
-                            }
-                            bool added = _loot.TryAdd(p.ItemBase, new StaticLootContainer(ownerItemId, pos, containerOpened));
-                            if (!added) {
-                                var newContainer = new StaticLootContainer(ownerItemId, pos, containerOpened);
-                                // This will Add if it doesn't exist, or Overwrite if it does.
-                                _loot[p.ItemBase] = newContainer;
-                            }
+                            bool containerOpened = Memory.ReadValue<ulong>(interactiveClass + 0x150) != 0; //EFT.IPlayer <InteractingPlayer>k__BackingField; // 0x150
+                            var newContainer = new StaticLootContainer(ownerItemId, pos, containerOpened);
+                            // This will Add if it doesn't exist, or Overwrite if it does.
+                            _loot[p.ItemBase] = newContainer;
                         }
                     }
                     catch
